@@ -1,0 +1,26 @@
+{% extends "base.html" %}{% block body %}
+<div class="eyebrow">Self-check</div>
+<h1>{{ issues|length }} thing{{ '' if issues|length==1 else 's' }} to look at</h1>
+<p class="sub">The tool reads your whole list and points out rows that do not add up. It changes nothing by itself: you choose.</p>
+{% if done %}<div class="warn" style="background:#E3F2E8;color:#1E7B4A">Done for {{ done }}.</div>{% endif %}
+{% if not issues %}<div class="panel"><b>Nothing found.</b> Every row with a reply adds up.</div>{% endif %}
+{% for i in issues %}
+<div class="panel" style="margin-bottom:12px">
+ <div class="cust" style="font-size:18px">{{ i.name }} <span class="meta">{{ i.no }} · row {{ i.row }}</span></div>
+ <div style="margin:6px 0 12px">{{ i.message }}</div>
+ <div class="row">
+ {% for act, label in i.options %}
+  <form class="inline" method="post" action="/checks/act"><input type="hidden" name="no" value="{{ i.no }}"><input type="hidden" name="code" value="{{ i.code }}"><input type="hidden" name="action" value="{{ act }}">
+   <button class="btn {{ 'amber' if loop.first }}" style="font-size:14px;padding:9px 18px">{{ label }}</button></form>
+ {% endfor %}
+ {% if not i.options %}<span class="hint">Fix it in your Excel, or open the reply under Check replies.</span>{% endif %}
+ </div>
+</div>
+{% endfor %}
+{% if tie %}
+<h2 style="color:var(--navy);margin-top:30px">MIS numbers that differ from the list ({{ tie|length }})</h2>
+<p class="sub">Typed numbers in the MIS sheet compared with counts worked out from the customer list. Cells with a formula are not compared.</p>
+<table><tr><th class="l">Region</th><th class="l">Division</th><th class="l">Column</th><th>In MIS</th><th>From the list</th></tr>
+{% for t in tie[:60] %}<tr><td class="l">{{ t.region }}</td><td class="l">{{ t.division }}</td><td class="l">{{ t.column }}</td><td>{{ t.in_mis }}</td><td>{{ t.from_list }}</td></tr>{% endfor %}</table>
+{% endif %}
+{% endblock %}

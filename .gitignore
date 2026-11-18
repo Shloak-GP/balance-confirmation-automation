@@ -1,0 +1,28 @@
+# Real customer data and local runs: never commit
+real_data/
+real_work/
+demo_data/
+data/
+*.db
+*.sqlite3
+
+# Config with real values: only the *.example.json files and config.docker.json (placeholders) are tracked
+config.json
+local_overrides.json
+.env
+*.secret
+
+# Build / Python leftovers
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+build/
+dist/
+*.spec
+*.zip
+
+# Office lock files
+~$*
+.DS_Store

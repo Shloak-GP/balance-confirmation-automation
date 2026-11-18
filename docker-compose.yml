@@ -1,0 +1,19 @@
+# docker compose up -d      (put config.docker.json in ./data/config.json first)
+services:
+  balance-check:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      BC_CONFIG: /data/config.json
+      BC_IMAP_PASSWORD: ${BC_IMAP_PASSWORD:-}      # mailbox password, from the environment, never from a file
+    volumes:
+      - ./data:/data                               # config.json + the tool's database and backups
+      - /srv/finance/lists:/lists                  # the consolidated Excel lives here (shared folder)
+      - /srv/finance/replies:/replies              # reply mails and PDFs
+      - /srv/finance/reports:/reports              # MIS files made by the tool
+    read_only: true
+    tmpfs: ["/tmp"]
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: ["ALL"]

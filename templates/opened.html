@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% block body %}
+<div class="eyebrow">Excel</div>
+<h1>{{ 'Opening in Excel…' if opened else 'Open this file in Excel' }}</h1>
+{% if opened %}<p class="sub">The {{ 'consolidated list' if what=='list' else 'MIS file' }} is opening on your computer. Edit it there and save.
+{% if what=='list' %}The tool reads your changes next time it writes: do not change the Clear / Dispute columns for rows you are about to save here.{% endif %}</p>
+{% else %}<p class="sub">{% if not ok and not opened %}The tool is not running on your own computer, so it cannot open Excel for you from here.{% endif %} Open it from this folder:</p>{% endif %}
+<div class="panel"><div class="cust" style="font-size:16px;word-break:break-all" id="p">{{ path }}</div>
+ <div class="row" style="margin-top:14px"><button class="btn" onclick="navigator.clipboard.writeText(document.getElementById('p').innerText);this.textContent='Copied'">Copy the location</button>
+ <a class="btn" href="/download{{ '-mis' if what=='mis' else '' }}">Download a copy</a><a class="btn" href="/">Back</a></div></div>
+{% endblock %}

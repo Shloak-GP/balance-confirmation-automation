@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% block body %}
+<div class="eyebrow">GP Petroleums</div><h1>Sign in</h1>
+<p class="sub">Enter the password you were given.</p>
+<form method="post" class="panel" style="max-width:420px">
+{% if err %}<div class="warn">{{ err }}</div>{% endif %}
+<label class="hint">Your name</label><input name="who" style="width:100%;margin-bottom:12px" autocomplete="name">
+<label class="hint">Password</label><input name="password" type="password" style="width:100%;margin-bottom:14px" autofocus>
+<button class="btn amber big">Sign in</button></form>
+{% endblock %}

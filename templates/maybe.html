@@ -1,0 +1,11 @@
+{% extends "base.html" %}{% block body %}
+<div class="eyebrow">Not sure</div><h1>Maybe-list</h1>
+<p class="sub">Mails with a document or picture attached, or a RE:/FW:, that did not clearly look like a balance confirmation. Nothing is lost: pick one. "It is a reply" sends it to the checks. "Not a reply" puts it aside.</p>
+{% if not items %}<div class="panel">Nothing to look at.</div>{% endif %}
+{% for m in items %}<div class="panel" style="margin-bottom:12px">
+<div class="cust" style="font-size:16px"><b>{{ m.subject }}</b></div>
+<div class="hint">From: {{ m.sender or "unknown" }}{% if m.atts %} · Attached: {{ m.atts|join(", ") }}{% endif %}</div>
+<div class="mail" style="max-height:120px;margin:8px 0">{{ m.preview }}</div>
+<div class="row"><form class="inline" method="post" action="/maybe/accept"><input type="hidden" name="name" value="{{ m.name }}"><button class="btn amber">It is a reply</button></form>
+<form class="inline" method="post" action="/maybe/dismiss"><input type="hidden" name="name" value="{{ m.name }}"><button class="btn">Not a reply</button></form></div></div>{% endfor %}
+{% endblock %}

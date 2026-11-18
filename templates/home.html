@@ -1,0 +1,23 @@
+{% extends "base.html" %}{% block body %}
+<div class="eyebrow">GP Petroleums · Balance confirmation {{ period }}</div>
+<h1>Hello</h1>
+<p class="sub">{% if request.args.added %}{{ request.args.added }} new file(s) found in the shared folder. {% endif %}Check each reply and press Save. The Excel and MIS update by themselves.</p>
+<div class="tiles">
+ <div class="tile hi"><div class="n">{{ todo }}</div><div class="l">replies to check</div></div>
+ <div class="tile"><div class="n">{{ done }}</div><div class="l">saved today</div></div>
+ <div class="tile"><div class="n">{{ pending }}</div><div class="l">customers still pending</div></div>
+</div>
+{% if pull_report %}<div class="hint" style="margin:8px 0">Last pull from Outlook: {{ pull_report.in_folder }} items in the folder, {{ pull_report.saved }} new, {{ pull_report.already }} already pulled, {{ pull_report.not_mail }} not ordinary mail, {{ pull_report.filtered }} left out (no reason to keep){% if pull_report.why %} · kept because: {% for k, v in pull_report.why.items() %}{{ k }} {{ v }}{{ ", " if not loop.last }}{% endfor %}{% endif %}{% if pull_report.failed %}, <b style="color:#B42318">{{ pull_report.failed|length }} failed</b>: {{ pull_report.failed[:3]|join('; ') }}{% endif %}.</div>{% endif %}
+<div class="row">
+ <a class="btn amber big" href="/check">Start checking →</a>
+ <form class="inline" method="post" action="/scan"><button class="btn">Look for new replies</button></form>
+ {% if onedrive_on %}<form class="inline" method="post" action="/onedrive/sync"><button class="btn">Sync OneDrive folder</button></form>{% endif %}
+ {% if imap_on %}<form class="inline" method="post" action="/imap/pull"><button class="btn">Pull from mailbox</button></form>{% endif %}
+ {% if outlook_on %}<form class="inline" method="post" action="/outlook/pull"><button class="btn">Pull from Outlook</button></form>{% endif %}
+ {% if maybe_count %}<a class="btn amber" href="/maybe">{{ maybe_count }} to look at: maybe replies</a>{% endif %}
+ <a class="btn" href="/open/list">Open Excel</a>
+ {% if already %}<a class="btn" href="/already">{{ already }} already in your Excel</a>{% endif %}
+ <a class="btn" href="/mis">MIS for boss</a>
+ {% if issue_count %}<a class="btn" href="/checks">{{ issue_count }} thing{{ '' if issue_count==1 else 's' }} to look at</a>{% endif %}
+</div>
+{% endblock %}

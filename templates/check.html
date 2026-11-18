@@ -1,0 +1,66 @@
+{% extends "base.html" %}{% block body %}
+<div class="eyebrow">{{ total }} repl{{ 'y' if total==1 else 'ies' }} left to check</div>
+<div class="prog"><div style="width:{{ 100 if total<=1 else (100/total)|round }}%"></div></div>
+<div class="check">
+ <div>
+  {% if it.mail_from or it.mail_subject %}<div class="mail" style="{{ 'max-height:600px' if not pages }}"><b>From:</b> {{ it.mail_from }}   <b>Date:</b> {{ it.mail_date }}
+<b>Subject:</b> {{ it.mail_subject }}
+{{ it.text[:600] }}</div>{% endif %}
+  {% if pages %}
+   <div class="viewer" style="height:auto;max-height:640px;overflow:auto;padding:8px">{% for n in range(pages) %}<img src="/page/{{ it.id }}/{{ n }}.png" style="width:100%;display:block;margin-bottom:8px;border-bottom:1px solid #eee;min-height:60px" alt="Loading page {{ n+1 }}..." onerror="this.alt='Could not draw page {{ n+1 }}. Use Open the attachment below.';this.style.padding='20px'">{% endfor %}</div>
+  {% elif (it.view_path or it.path).lower().endswith('.pdf') %}
+   <iframe class="viewer" src="/file/{{ it.id }}"></iframe>
+  {% elif (it.view_path or it.path).lower().endswith(('.png','.jpg','.jpeg','.gif')) %}
+   <div class="viewer" style="height:auto;max-height:640px;overflow:auto;padding:8px"><img src="/file/{{ it.id }}" style="width:100%" alt="attachment"></div>
+  {% elif not (it.mail_from or it.mail_subject) %}<div class="mail" style="max-height:600px">{{ it.text }}</div>{% endif %}
+  {% if it.attachments|length > 1 or (it.attachments and not (it.view_path or '').endswith(it.attachments[0].name)) %}<div class="hint" style="margin-top:6px">All attachments: {% for a in it.attachments %}<a href="/att/{{ it.id }}/{{ loop.index0 }}" target="_blank">{{ a.name }}</a>{{ ' · ' if not loop.last }}{% endfor %}</div>{% endif %}
+  {% if it.view_path or it.path.lower().endswith('.pdf') %}<div class="hint" style="margin-top:6px">Page blank or not showing? <a href="/file/{{ it.id }}" target="_blank"><b>Open the attachment in a new tab</b></a> · <a href="/diag/{{ it.id }}" target="_blank">why is it blank?</a></div>{% endif %}
+  <div class="hint" style="margin-top:6px">File: {{ filename }} · <a href="/file/{{ it.id }}" target="_blank">open original</a></div>
+ </div>
+ <form class="panel" method="post" action="/save/{{ it.id }}" autocomplete="off">
+  {% if request.args.err %}<div class="err">{{ request.args.err }}</div>{% endif %}
+  {% if c and it.name_ok %}
+   <div class="cust">{{ c.name }}</div>
+   <div class="meta">No. {{ c.no }} · {{ c.region }} · {{ c.group }} · <a href="#" onclick="document.getElementById('pick').style.display='block';return false">wrong customer?</a></div>
+  {% else %}
+   <div class="warn">{% if c %}The customer No. on this reply ({{ c.no }}) does not match the name. Please check.{% else %}Customer not recognised. Please pick the customer.{% endif %}</div>
+  {% endif %}
+  {% if it.cust_how and 'customer No.' not in it.cust_how %}<div class="hint">How I found the customer: {{ it.cust_how }}.</div>{% endif %}
+  {% if it.candidates and not (c and it.name_ok) %}<div class="hint">Could be:
+   {% for x in customers if x.no in it.candidates %}<a href="#" onclick="var i=document.querySelector('[name=cust_no]');i.value='{{ x.no }} · {{ x.name|replace("'", "") }}';pickCust(i.value);document.getElementById('pick').style.display='block';return false">{{ x.name }} ({{ x.no }})</a>{{ ' · ' if not loop.last }}{% endfor %}</div>{% endif %}
+  <div id="pick" style="display:{{ 'none' if c and it.name_ok else 'block' }}">
+   <label class="f">Customer (type a name or No.)</label>
+   <input class="t" name="cust_no" list="custs" value="{{ (c.no ~ ' · ' ~ c.name) if c else '' }}" oninput="pickCust(this.value)">
+   <datalist id="custs">{% for x in customers %}<option value="{{ x.no }} · {{ x.name }}">{% endfor %}</datalist>
+  </div>
+  <div class="nums">
+   <div class="num"><div class="l">Our balance (from your consolidated list)</div><div class="v" id="ours" data-v="{{ c.erp if c and c.erp is not none else '' }}">{{ (c.erp|inr) if c else '–' }}</div></div>
+   <div class="num {{ 'edit' if it.needs_typing }}"><div class="l">Customer's balance</div><input name="theirs" id="theirs" value="{{ theirs }}" placeholder="type here" oninput="calc()" {{ 'autofocus' if it.needs_typing }}>
+    <a href="#" class="hint" onclick="var o=document.getElementById('ours').dataset.v;if(o){document.getElementById('theirs').value=parseFloat(o).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});calc();}return false">Signed, same as ours</a></div>
+  </div>
+  <div class="result none" id="res">Type the customer's balance</div>
+  <div class="hint">{{ it.reason }}</div>
+  {% for f in it.flags %}<div class="warn">{{ f }}</div>{% endfor %}
+  {% for e in earlier %}<div class="warn">This customer already has a saved reply ({{ e.saved_at[:10] }}, {{ e.status }}). Saving again replaces it.</div>{% endfor %}
+  <label class="f">Remarks (optional)</label><textarea name="remarks" rows="2"></textarea>
+  <div class="row"><button class="btn navy big">✓ Correct, save</button></div>
+  <div class="row" style="margin-top:14px;gap:18px">
+   <button class="linkbtn" formaction="/skip/{{ it.id }}">Skip for now</button>
+   <button class="linkbtn" formaction="/not-a-reply/{{ it.id }}">Not a balance confirmation</button>
+  </div>
+ </form>
+</div>
+<script>
+const ERP={ {% for x in customers %}"{{ x.no }}":{{ x.erp if x.erp is not none else 'null' }},{% endfor %} };
+const fmt=n=>"₹ "+Math.abs(n).toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2});
+function pickCust(v){const no=v.split(" · ")[0].trim();const o=document.getElementById("ours");
+ if(no in ERP){o.dataset.v=ERP[no]??"";o.textContent=ERP[no]==null?"–":fmt(ERP[no]);calc();}}
+function calc(){const ours=parseFloat(document.getElementById("ours").dataset.v);
+ const t=parseFloat(document.getElementById("theirs").value.replace(/[^0-9.\-]/g,""));const r=document.getElementById("res");
+ if(isNaN(t)||isNaN(ours)){r.className="result none";r.innerHTML=isNaN(ours)?"Pick the customer first":"Type the customer's balance";return}
+ const d=Math.round((ours-t)*100)/100;
+ if(d===0){r.className="result clear";r.innerHTML="CLEAR<small>Balances match</small>"}
+ else{r.className="result dispute";r.innerHTML="DISPUTE<small>Difference "+fmt(d)+(d>0?" (customer shows less)":" (customer shows more)")+"</small>"}}
+calc();
+</script>
+{% endblock %}

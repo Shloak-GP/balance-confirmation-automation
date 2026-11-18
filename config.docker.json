@@ -1,0 +1,47 @@
+{
+ "consolidated_list": "/lists/Consolidated List.xlsx",
+ "sources": [
+  {
+   "name": "Shared folder",
+   "path": "/replies"
+  }
+ ],
+ "shared_folder": "/replies",
+ "output_folder": "/reports",
+ "data_folder": "/data/store",
+ "write_mode": "in_place",
+ "host": "0.0.0.0",
+ "port": 8080,
+ "auto_scan_minutes": 10,
+ "access_password": "CHANGE-ME",
+ "boss_email": "",
+ "thread_subject": "",
+ "report_link_prefix": "",
+ "imap_host": "",
+ "imap_user": "",
+ "imap_folder": "INBOX",
+ "period": "",
+ "own_domains": [
+  "gpglobal.com"
+ ],
+ "division_map": {
+  "_comment": "Customer Posting Group in his list -> MIS division. Matches his Sept 2026 MIS counts for the 8 divisions; OTHERS/FOREIGN/COAL/TOILS are not in the MIS.",
+  "AUTOMOTIVE (IPOL)": "AUTOMOTIVE (IPOL)",
+  "AUTOMOTIVE (REPSOL)": "AUTOMOTIVE (REPSOL)",
+  "INDUSTRIAL (CORE)": "INDUSTRIAL (CORE)",
+  "RPO": "RPO",
+  "BITUMEN": "BITUMEN",
+  "BOILS": "BASE OILS",
+  "BASE OILS": "BASE OILS",
+  "FUEL OIL": "FUEL OIL",
+  "FO": "FUEL OIL",
+  "RPO TRADING": "RPO TRADING",
+  "AUTO-IPOL": "AUTOMOTIVE (IPOL)",
+  "AUTO-REPSOL": "AUTOMOTIVE (REPSOL)",
+  "IND-CORE": "INDUSTRIAL (CORE)"
+ },
+ "regional_teams": {
+  "_comment": "Short name in the ERP dump -> full name used in the list.",
+  "Ramesh K": "Ramesh Kulkarni"
+ }
+}

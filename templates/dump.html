@@ -1,0 +1,29 @@
+{% extends "base.html" %}{% block body %}
+<div class="eyebrow">Every half year</div>
+<h1>Start a new period</h1>
+<p class="sub">Upload the ERP dump (the file called Balance Confirmation …xlsx). The tool builds a new consolidated list in your template. Your current list is not touched.</p>
+{% if err %}<div class="err">{{ err }}</div>{% endif %}
+<form class="panel" method="post" enctype="multipart/form-data" style="margin-bottom:20px">
+ <label class="f">ERP dump (.xlsx)</label><input class="t" type="file" name="dump" accept=".xlsx">
+ <button class="btn amber big">Make the new list</button>
+</form>
+{% if report %}
+<div class="tiles">
+ <div class="tile hi"><div class="n">{{ report.written }}</div><div class="l">customers in the new list</div></div>
+ <div class="tile"><div class="n">{{ report.new_customers|length }}</div><div class="l">new (not in your last list): priority and email blank</div></div>
+ <div class="tile"><div class="n">{{ report.dropped|length }}</div><div class="l">left out (posting group not in the MIS)</div></div>
+</div>
+<div class="row" style="margin-bottom:18px"><a class="btn navy big" href="/dump/download">Download the new list</a></div>
+<div class="panel">
+ <b>What to check before using it</b>
+ <ul>
+  <li>{{ report.carried }} customers had a priority and email in your last list and kept them. <b>{{ report.no_priority }}</b> have no priority and <b>{{ report.no_email }}</b> have no email id: the dump does not contain these, so they are blank for you to fill.</li>
+  <li>Balance Confirmation to send is "No" for {{ report.excluded_flag }} customers marked Exclude = Yes in the dump (assumption, please confirm).</li>
+  {% if report.unknown_team %}<li>Regional team names I do not know the full name of: {{ report.unknown_team|join(', ') }} (kept as in the dump). Add them under <code>regional_teams</code> in config.</li>{% endif %}
+  {% if report.unmapped_region %}<li>No region found for: {{ report.unmapped_region[:10]|join(', ') }}{% if report.unmapped_region|length>10 %} …{% endif %}</li>{% endif %}
+  {% if report.dropped %}<li>Left out: {% for no,name,g in report.dropped[:8] %}{{ name }} ({{ g }}){{ ', ' if not loop.last }}{% endfor %}{% if report.dropped|length>8 %} and {{ report.dropped|length-8 }} more{% endif %}.</li>{% endif %}
+ </ul>
+ <p class="hint">The MIS in the new file is recounted from the new list (Received starts at zero). Your formulas are kept.</p>
+</div>
+{% endif %}
+{% endblock %}

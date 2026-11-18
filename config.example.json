@@ -1,0 +1,72 @@
+{
+  "_comment": "Copy to config.json and set the paths for the server. Paths can be a mapped network drive or a SharePoint folder synced to the server.",
+  "shared_folder": "/mnt/shared/BalanceConfirmations/Replies",
+  "sources": [
+    {
+      "name": "Shared folder",
+      "path": "/mnt/shared/BalanceConfirmations/Replies"
+    },
+    {
+      "name": "His mail",
+      "path": "/mnt/shared/BalanceConfirmations/FromMail"
+    }
+  ],
+  "_sources_comment": "Every source is read-only. Same reply in several sources = one item. 'His mail' = a folder his mails land in (see README); remove it if not used.",
+  "consolidated_list": "/mnt/shared/BalanceConfirmations/Consolidated_List.xlsx",
+  "output_folder": "/mnt/shared/BalanceConfirmations/Reports",
+  "data_folder": "/opt/balance-check/data",
+  "period": "Sept 2026",
+  "write_mode": "in_place",
+  "_write_mode_comment": "in_place = update his real consolidated_list file (only the tool's 6 columns + MIS counts; backups in data_folder/backups). copy = never touch his file, write a dated copy to output_folder.",
+  "fill_mis_counts": false,
+  "mis_formulas": true,
+  "outlook_folder": "",
+  "outlook_save_to": "",
+  "outlook_keywords": ["balance", "confirm", "ledger", "statement", "outstanding", "reconcil"],
+  "outlook_thread_folder": "",
+  "thread_subject": "",
+  "thread_to": "",
+  "thread_cc": "",
+  "thread_message_id": "",
+  "boss_email": "",
+  "report_link_prefix": "\\\\fileserver\\Finance\\BalConf\\Reports\\",
+  "user_name": "owner",
+  "onedrive_link": "",
+  "graph_tenant": "",
+  "graph_client_id": "",
+  "graph_mailbox": "",
+  "graph_folder": "inbox",
+  "graph_since_days": 30,
+  "imap_host": "",
+  "imap_port": 993,
+  "imap_user": "",
+  "imap_folder": "INBOX",
+  "imap_since_days": 30,
+  "access_password": "",
+  "auto_scan_minutes": 10,
+  "host": "0.0.0.0",
+  "port": 8080,
+  "division_map": {
+    "_comment": "Customer Posting Group in his list -> MIS division. Matches his Sept 2026 MIS counts for the 8 divisions; OTHERS/FOREIGN/COAL/TOILS are not in the MIS.",
+    "AUTOMOTIVE (IPOL)": "AUTOMOTIVE (IPOL)",
+    "AUTOMOTIVE (REPSOL)": "AUTOMOTIVE (REPSOL)",
+    "INDUSTRIAL (CORE)": "INDUSTRIAL (CORE)",
+    "RPO": "RPO",
+    "BITUMEN": "BITUMEN",
+    "BOILS": "BASE OILS",
+    "BASE OILS": "BASE OILS",
+    "FUEL OIL": "FUEL OIL",
+    "FO": "FUEL OIL",
+    "RPO TRADING": "RPO TRADING",
+    "AUTO-IPOL": "AUTOMOTIVE (IPOL)",
+    "AUTO-REPSOL": "AUTOMOTIVE (REPSOL)",
+    "IND-CORE": "INDUSTRIAL (CORE)"
+  },
+  "regional_teams": {
+    "_comment": "Short name in the ERP dump -> full name used in the list.",
+    "Ramesh K": "Ramesh Kulkarni"
+  },
+  "own_domains": [
+    "gpglobal.com"
+  ]
+}

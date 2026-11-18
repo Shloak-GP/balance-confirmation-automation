@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Balance Confirmations</title>
+<style>
+:root{--navy:#000054;--amber:#FFB000;--bg:#F1F0EC;--card:#FAF9F6;--ink:#212222;--muted:#6B6A64;--line:#D9D8D2;--green:#1E7B4A;--greenbg:#E3F2E8;--red:#B3261E;--redbg:#FBE4E2}
+*{box-sizing:border-box}body{margin:0;font-family:Poppins,"Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:var(--navy);color:#F1F0EC;padding:14px 28px;display:flex;justify-content:space-between;align-items:center}
+.brand{font-weight:600;font-size:19px;color:#F1F0EC;text-decoration:none}.brand span{color:var(--amber)}
+nav a{color:#F1F0EC;text-decoration:none;font-size:14px;margin-left:20px;opacity:.8}nav a.on{opacity:1;border-bottom:2px solid var(--amber)}
+main{max-width:1240px;margin:0 auto;padding:26px}
+.eyebrow{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#C98A00;font-weight:600}
+h1{font-weight:600;font-size:30px;margin:6px 0 4px;color:var(--navy)}p.sub{color:var(--muted);margin:0 0 22px}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:24px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px}.tile .n{font-size:44px;font-weight:600;color:var(--navy);line-height:1.1}
+.tile.hi{background:var(--navy);color:#F1F0EC}.tile.hi .n{color:var(--amber)}.tile .l{font-size:14px;opacity:.85}
+.btn{font:inherit;font-weight:600;font-size:16px;border-radius:999px;padding:13px 26px;border:2px solid var(--navy);background:var(--card);color:var(--navy);cursor:pointer;text-decoration:none;display:inline-block}
+.btn.amber{background:var(--amber);border-color:var(--amber)}.btn.navy{background:var(--navy);color:#fff}.btn.big{font-size:18px;padding:17px 32px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}form.inline{display:inline}
+.linkbtn{background:none;border:none;color:var(--muted);text-decoration:underline;cursor:pointer;font:inherit;font-size:14px;padding:0}
+.check{display:grid;grid-template-columns:1.15fr 1fr;gap:22px}
+.mail{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:13px;margin-bottom:12px;white-space:pre-wrap;max-height:160px;overflow:auto}
+.viewer{width:100%;height:600px;border:1px solid var(--line);border-radius:14px;background:#fff}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px}
+.cust{font-size:22px;font-weight:600;color:var(--navy)}.meta{color:var(--muted);font-size:13px;margin-bottom:16px}
+.nums{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.num{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:#fff}.num .l{font-size:12px;color:var(--muted)}.num .v{font-size:22px;font-weight:600}
+.num input{font:inherit;font-size:22px;font-weight:600;border:none;width:100%;background:none;padding:0;color:var(--ink)}.num.edit{border:2px solid var(--amber)}
+.result{border-radius:12px;padding:14px 16px;font-size:18px;font-weight:600;margin-bottom:12px}.result small{display:block;font-weight:400;font-size:13px}
+.result.clear{background:var(--greenbg);color:var(--green)}.result.dispute{background:var(--redbg);color:var(--red)}.result.none{background:#ECEBE5;color:var(--muted)}
+.hint{font-size:13px;color:var(--muted);margin-bottom:10px}.warn{font-size:13px;color:#8A5A00;background:#FFF4D6;border-radius:8px;padding:8px 10px;margin-bottom:10px}
+.err{font-size:14px;color:var(--red);font-weight:600;margin-bottom:10px}
+label.f{font-size:12px;color:var(--muted);display:block;margin-bottom:4px}
+input.t,textarea{width:100%;font:inherit;font-size:14px;border:1px solid var(--line);border-radius:10px;padding:10px;background:#fff;margin-bottom:12px}
+.prog{height:6px;background:var(--line);border-radius:6px;margin:6px 0 20px}.prog div{height:100%;background:var(--amber);border-radius:6px}
+table{width:100%;border-collapse:collapse;background:var(--card);font-size:13px;border-radius:12px;overflow:hidden}
+th{background:var(--navy);color:#F1F0EC;font-weight:500;padding:10px;text-align:right}th.l,td.l{text-align:left}
+td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:right}
+</style></head><body>
+<header><a class="brand" href="/">balance<span>·</span>check</a>
+<nav><a href="/" class="{{ 'on' if request.path=='/' }}">Home</a><a href="/check" class="{{ 'on' if request.path=='/check' or request.path.startswith('/check/') }}">Check replies</a><a href="/compare" class="{{ 'on' if request.path=='/compare' }}">Mail vs folder</a><a href="/saved" class="{{ 'on' if request.path=='/saved' }}">Saved</a><a href="/checks" class="{{ 'on' if request.path=='/checks' }}">Checks{% if issue_count %} <span style="background:var(--amber);color:var(--navy);border-radius:999px;padding:1px 8px;font-size:12px;font-weight:600">{{ issue_count }}</span>{% endif %}</a><a href="/mis" class="{{ 'on' if request.path=='/mis' }}">MIS report</a><a href="/dump" class="{{ 'on' if request.path=='/dump' }}">New period</a></nav></header>
+<main>{% if pending_write %}<div class="warn" style="font-size:15px">The Excel is open on someone's computer, so today's saves are waiting. Close the Excel and the tool will update it by itself.</div>{% endif %}{% block body %}{% endblock %}</main></body></html>

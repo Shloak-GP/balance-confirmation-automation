@@ -1,0 +1,11 @@
+{% extends "base.html" %}{% block body %}
+<div class="eyebrow">Debtors balance confirmation summary {{ period }}</div><h1>MIS for boss</h1>
+<p class="sub">Counted from the consolidated list, in your MIS layout. Rows with no customers are hidden here but kept in the Excel.</p>
+{% if unmapped %}<div class="warn">These Customer Posting Groups are not linked to a division yet, so their customers are not counted: {{ unmapped|join(', ') }}</div>{% endif %}
+{% if missing %}<div class="warn">Saved replies for customer No. not found in the list: {{ missing|join(', ') }}</div>{% endif %}
+<table><thead><tr><th class="l">Region</th><th class="l">Division</th><th>Total customers</th><th>Priority 1</th><th>Priority 2</th><th>Priority 3</th><th>Received</th><th>Pending</th><th>% Achievement</th></tr></thead><tbody>
+{% for r in rows %}<tr><td class="l">{{ r.region }}</td><td class="l">{{ r.div }}</td><td>{{ r.total }}</td><td>{{ r.p1 }}</td><td>{{ r.p2 }}</td><td>{{ r.p3 }}</td><td>{{ r.rec }}</td><td>{{ r.pen }}</td><td>{{ r.pct }}</td></tr>{% endfor %}
+</tbody></table>
+<div class="row" style="margin-top:20px"><a class="btn amber big" href="/open/mis">Open MIS in Excel</a>{% if graph_on %}<a class="btn amber" href="/mis-email?graph=1">Reply on the thread (Outlook draft, file attached)</a>{% endif %}{% if outlook_mail_on %}<a class="btn navy" href="/mis-email?outlook=1">Email MIS to boss (Outlook, file attached)</a>{% else %}<a class="btn navy" href="/mis-email">Email MIS to boss (draft with file)</a>{% endif %}<a class="btn" href="/open/list">Open the full list in Excel</a></div>
+<p class="hint" style="margin-top:10px"><b>Open email in Outlook</b> opens a new mail in Outlook with the summary and the MIS file's location filled in. Check it and press Send.<br><b>Draft with MIS attached</b> downloads a draft file; double-click it and Outlook opens it with the MIS attached.</p>
+{% endblock %}

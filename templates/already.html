@@ -1,0 +1,6 @@
+{% extends "base.html" %}{% block body %}
+<div class="eyebrow">Already done</div><h1>Already in your Excel</h1>
+<p class="sub">These replies belong to customers whose row in your Excel already has a received date or a Clear / Dispute mark that you entered yourself. They are not in the "to check" queue. Open one only if you want to check or correct it.</p>
+{% if not rows %}<div class="panel">None.</div>{% endif %}
+<table><tbody>{% for it in rows %}{% set c = cs.get(it.cust_no) %}<tr><td class="l">{{ it.cust_no }} · {{ c.name if c else '' }}</td><td class="l">{{ c.status if c else '' }}</td><td class="l">{{ c.recvd if c else '' }}</td><td><a href="/check/{{ it.id }}">Check anyway</a></td></tr>{% endfor %}</tbody></table>
+{% endblock %}

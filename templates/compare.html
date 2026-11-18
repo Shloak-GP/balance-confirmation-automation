@@ -1,0 +1,13 @@
+{% extends "base.html" %}{% block body %}
+<div class="eyebrow">Is everything in both places?</div><h1>Mail vs shared folder</h1>
+<p class="sub">Each reply is counted once, even if it arrived in both. Replies found in only one place may be missing from the other, so check them.</p>
+<div class="tiles">
+ <div class="tile"><div class="n">{{ groups.both|length }}</div><div class="l">in both</div></div>
+ {% for n in names %}<div class="tile {{ 'hi' if groups.only[n] }}"><div class="n">{{ groups.only[n]|length }}</div><div class="l">only in {{ n }}</div></div>{% endfor %}
+</div>
+{% for n in names %}{% if groups.only[n] %}
+<h2 style="color:#000054;font-weight:600;font-size:18px">Only in {{ n }}</h2>
+<table><thead><tr><th class="l">Customer</th><th class="l">File</th><th class="l">Status</th></tr></thead><tbody>
+{% for it in groups.only[n] %}<tr><td class="l">{{ it.cust_no or '?' }} · {{ cs[it.cust_no].name if it.cust_no in cs else '' }}</td><td class="l">{{ it.path.split('/')[-1] }}</td><td class="l">{{ 'saved' if it.state=='saved' else 'to check' }}</td></tr>{% endfor %}
+</tbody></table><br>{% endif %}{% endfor %}
+{% endblock %}

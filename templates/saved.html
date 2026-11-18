@@ -1,0 +1,7 @@
+{% extends "base.html" %}{% block body %}
+<div class="eyebrow">Last 50 saved</div><h1>Saved replies</h1><p class="sub">Press View to see the reply and its attached file again. Made a mistake? Press Fix to re-do it.</p>
+<table><thead><tr><th class="l">Saved</th><th class="l">Customer</th><th>Customer's balance</th><th class="l">Result</th><th class="l">By</th><th></th></tr></thead><tbody>
+{% for r in rows %}<tr><td class="l">{{ r.saved_at[:16].replace('T',' ') }}</td><td class="l">{{ r.cust_no }} · {{ cs[r.cust_no].name if r.cust_no in cs else '' }}</td><td>{{ r.theirs|inr }}</td><td class="l">{{ r.status }}</td><td class="l">{{ r.saved_by }}</td>
+<td><a href="/check/{{ r.id }}">View</a> · <form class="inline" method="post" action="/reopen/{{ r.id }}"><button class="linkbtn">Fix</button></form></td></tr>{% endfor %}
+</tbody></table>
+{% endblock %}
